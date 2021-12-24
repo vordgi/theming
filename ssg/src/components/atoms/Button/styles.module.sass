@@ -1,0 +1,14 @@
+.button
+    color: var(--main-lvl9)
+    padding: 12px 24px
+    border-radius: 8px
+    opacity: 1
+    text-transform: uppercase
+    transition: background .5s ease, opacity .5s ease
+    &:not(:disabled)
+        background: var(--secondary)
+        cursor: pointer
+        &:hover
+            opacity: 0.8
+    &:disabled
+        background: var(--disabled)

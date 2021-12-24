@@ -1,0 +1,52 @@
+body 
+  background-color: var(--body)
+  margin: 0
+  padding: 0
+  font-family: Roboto, sans-serif
+  color: var(--main-lvl1)
+  box-sizing: border-box
+
+#root
+  display: flex
+  position: absolute
+  flex-direction: column
+  height: 100%
+  width: 100%
+
+h1,h2,h3,h4,h5,h6,p 
+  margin: 0 
+
+@media(max-width: 600px) 
+  h1 
+    font-size: 1.5em
+
+*, *:before, *:after
+  box-sizing: border-box
+
+.theme-light
+  --body: #ECEFF1
+  --antiBody: #263238
+  --primary: #1565C0
+  --secondary: #EF6C00
+  --error: #C62828
+  --default: #9E9E9E
+  --disabled: #E0E0E0
+  --main-lvl1: #263238
+  --main-lvl3: #546E7A
+  --main-lvl5: #78909C
+  --main-lvl7: #B0BEC5
+  --main-lvl9: #ECEFF1
+
+.theme-dark
+  --body: #263238
+  --antiBody: #ECEFF1
+  --primary: #90CAF9
+  --secondary: #FFE0B2
+  --error: #FFCDD2
+  --default: #BDBDBD
+  --disabled: #616161
+  --main-lvl1: #ECEFF1
+  --main-lvl3: #B0BEC5
+  --main-lvl5: #78909C
+  --main-lvl7: #546E7A
+  --main-lvl9: #263238
