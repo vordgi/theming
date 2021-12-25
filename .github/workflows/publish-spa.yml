@@ -3,7 +3,7 @@ name: Publish spa
 on: [push]
 
 jobs:
-  deploy:
+  build-apps:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,9 +12,31 @@ jobs:
           node-version: '14'
       - name: Install Dependencies
         run: yarn
-      - name: Build Appliction
+      - name: Build SPA
         run: yarn build:spa
-      - name: Deploy to Server
+      - name: Build SSG
+        run: yarn build:ssg
+      - name: Build SSR
+        run: yarn build:ssr
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-apps
+          path: |
+            spa/build
+            ssg/build
+            ssr/build
+          retention-days: 1
+
+  deploy-apps:
+    runs-on: ubuntu-latest
+    needs: build-apps
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-apps
+      - name: install production deps
+        run: yarn --prod
+      - name: Deploy SPA to Server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST_DO }}
@@ -24,5 +46,23 @@ jobs:
           source: spa/build
           target: /var/www/theming-spa.vorfolio.ru
           strip_components: 1
-      - name: Print Info
-        run: echo "Deployed at https://theming-spa.vorfolio.ru"
+      - name: Deploy SSG to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ssg/build, node_modules, package.json
+          target: /var/www/theming-ssg.vorfolio.ru
+          strip_components: 1
+      - name: Deploy SSR to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ssr/build, node_modules, package.json
+          target: /var/www/theming-ssr.vorfolio.ru
+          strip_components: 1
