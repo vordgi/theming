@@ -70,3 +70,18 @@ jobs:
           source: "ssr/.next,./node_modules,ssr/package.json"
           target: /var/www/theming-ssr.vorfolio.ru
           strip_components: 1
+
+  run-apps:
+    runs-on: ubuntu-latest
+    needs: deploy-apps
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/theming-ssg.vorfolio.ru && (pm2 reload theming-ssg || pm2 --name theming-ssg start npm -- start)
+            cd /var/www/theming-ssr.vorfolio.ru && (pm2 reload theming-ssr || pm2 --name theming-ssr start npm -- start)
