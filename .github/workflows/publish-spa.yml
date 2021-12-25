@@ -83,5 +83,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME_DO }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/theming-ssg.vorfolio.ru && (pm2 reload theming-ssg || pm2 --name theming-ssg start npm -- start)
-            cd /var/www/theming-ssr.vorfolio.ru && (pm2 reload theming-ssr || pm2 --name theming-ssr start npm -- start)
+            cd /var/www/theming-ssg.vorfolio.ru && (pm2 reload theming-ssg || pm2 --name theming-ssg start npm -- start -- --port 3001)
+            cd /var/www/theming-ssr.vorfolio.ru && (pm2 reload theming-ssr || pm2 --name theming-ssr start npm -- start -- --port 3002)
