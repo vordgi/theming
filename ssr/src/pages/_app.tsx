@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <meta name="theme-color" content={pageProps.theme === 'dark' ? '#00BCD4' : '#00838F'} />
         <meta name="reply-to" content="vordgi1@gmail.com" />
-        <meta name="subject" content="Личный сайт" />
+        <meta name="subject" content="Themization SSR example." />
         <meta name="HandheldFriendly" content="true" />
         <meta name="author" content="Савельев Александр" />
         <meta name="copyright" content="Савельев Александр" />
