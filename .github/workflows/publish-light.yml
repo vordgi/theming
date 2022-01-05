@@ -1,4 +1,4 @@
-name: Publish spa
+name: Publish light
 
 on: [push]
 
@@ -14,10 +14,16 @@ jobs:
         run: yarn
       - name: Build SPA
         run: yarn build:spa
+        env:
+          REACT_APP_THEME: light
       - name: Build SSG
         run: yarn build:ssg
+        env:
+          NEXT_PUBLIC_THEME: light
       - name: Build SSR
         run: yarn build:ssr
+        env:
+          NEXT_PUBLIC_THEME: light
       - uses: actions/upload-artifact@v2
         with:
           name: build-apps

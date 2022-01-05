@@ -37,8 +37,6 @@ const HomePage: React.FC<{ mockData: string[]; theme: Theme }> = ({
     });
   }, []);
 
-  if (!theme) return <></>;
-
   return (
     <ThemeContext.Provider value={{ theme, onChangeTheme }}>
       <Layout>
@@ -53,7 +51,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const userDeviceTheme = ctx.req.headers['sec-ch-prefers-color-scheme'] as string;
   const cookieTheme = ctx.req.cookies.theme;
   const userDetectedTheme = cookieTheme || userDeviceTheme;
-  const theme = (userDetectedTheme === 'light' || userDetectedTheme === 'dark') ? userDetectedTheme : 'light';
+  const defaultTheme = process.env.NEXT_PUBLIC_THEME || 'light';
+  const theme = (userDetectedTheme === 'light' || userDetectedTheme === 'dark') ? userDetectedTheme : defaultTheme;
   return ({
     props: {
       mockData: [...new Array(500)].map((_v, i) => `Item №${i + 1}.`),

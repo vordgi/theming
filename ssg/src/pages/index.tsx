@@ -7,17 +7,19 @@ import Layout from '../components/templates/Layout';
 import MockBlock from '../components/organisms/MockBlock';
 
 const HomePage: React.FC<{ mockData: string[] }> = ({ mockData }) => {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(process.env.NEXT_PUBLIC_THEME as Theme || 'light');
   const changeTheme = (newTheme: Theme) => {
     document.cookie = `theme=${newTheme};path=/;max-age=31536000`;
     document.documentElement.classList.remove('theme-dark', 'theme-light');
     document.documentElement.classList.add(`theme-${newTheme}`);
     setTheme(newTheme);
   };
+
   const onChangeTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     changeTheme(newTheme);
   };
+
   useEffect(() => {
     const savedTheme = document.cookie.match(/theme=([^;]*)/)?.[1] as Theme | undefined;
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) changeTheme(savedTheme);
@@ -27,6 +29,7 @@ const HomePage: React.FC<{ mockData: string[] }> = ({ mockData }) => {
       changeTheme('light');
     }
   }, []);
+
   useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (e.matches) {

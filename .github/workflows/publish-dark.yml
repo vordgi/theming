@@ -1,0 +1,93 @@
+name: Publish dark
+
+on: [push]
+
+jobs:
+  build-apps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+      - name: Install Dependencies
+        run: yarn
+      - name: Build SPA
+        run: yarn build:spa
+        env:
+          REACT_APP_THEME: dark
+      - name: Build SSG
+        run: yarn build:ssg
+        env:
+          NEXT_PUBLIC_THEME: dark
+      - name: Build SSR
+        run: yarn build:ssr
+        env:
+          NEXT_PUBLIC_THEME: dark
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-apps
+          path: |
+            spa/build
+            ssg/.next
+            ssr/.next
+          retention-days: 1
+
+  deploy-apps:
+    runs-on: ubuntu-latest
+    needs: build-apps
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-apps
+      - name: Install production deps
+        run: yarn install --production
+      - name: Deploy SPA to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: spa/build
+          target: /var/www/theming-spa-dark.vorfolio.ru
+          strip_components: 1
+      - name: Deploy SSG to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ssg/.next,./node_modules,ssg/package.json"
+          target: /var/www/theming-ssg-dark.vorfolio.ru
+          strip_components: 1
+      - name: Deploy SSR to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ssr/.next,./node_modules,ssr/package.json"
+          target: /var/www/theming-ssr-dark.vorfolio.ru
+          strip_components: 1
+
+  run-apps:
+    runs-on: ubuntu-latest
+    needs: deploy-apps
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_DO }}
+          port: ${{ secrets.SSH_PORT_DO }}
+          username: ${{ secrets.SSH_USERNAME_DO }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/theming-ssg-dark.vorfolio.ru && (pm2 reload theming-ssg-dark || pm2 --name theming-ssg-dark start npm -- start -- --port 3003)
+            cd /var/www/theming-ssr-dark.vorfolio.ru && (pm2 reload theming-ssr-dark || pm2 --name theming-ssr-dark start npm -- start -- --port 3004)
