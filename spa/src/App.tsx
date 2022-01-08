@@ -8,7 +8,7 @@ import MockBlock from './components/organisms/MockBlock';
 const mockData = [...new Array(500)].map((_v, i) => `Item №${i + 1}.`);
 
 const HomePage: React.FC = () => {
-  const [theme, setTheme] = useState<Theme>(process.env.REACT_APP_THEME as Theme || 'light');
+  const [theme, setTheme] = useState<Theme>();
 
   const changeTheme = (newTheme: Theme) => {
     document.cookie = `theme=${newTheme};path=/;max-age=31536000`;
@@ -27,8 +27,10 @@ const HomePage: React.FC = () => {
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) changeTheme(savedTheme);
     else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
       changeTheme('dark');
-    } else {
+    } else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
       changeTheme('light');
+    } else if (process.env.NEXT_PUBLIC_THEME) {
+      changeTheme(process.env.NEXT_PUBLIC_THEME as Theme);
     }
   }, []);
 
@@ -41,6 +43,8 @@ const HomePage: React.FC = () => {
       }
     });
   }, []);
+
+  if (!theme) return <></>;
 
   return (
     <ThemeContext.Provider value={{ theme, onChangeTheme }}>

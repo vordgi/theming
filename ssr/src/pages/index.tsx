@@ -21,13 +21,6 @@ const HomePage: React.FC<{ mockData: string[]; theme: Theme }> = ({
     changeTheme(newTheme);
   };
   useEffect(() => {
-    const savedTheme = document.cookie.match(/theme=([^;]*)/)?.[1] as Theme | undefined;
-    if (savedTheme && ['light', 'dark'].includes(savedTheme)) changeTheme(savedTheme);
-    else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-      changeTheme('dark');
-    }
-  }, []);
-  useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (e.matches) {
         changeTheme('dark');

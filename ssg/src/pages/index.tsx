@@ -25,8 +25,10 @@ const HomePage: React.FC<{ mockData: string[] }> = ({ mockData }) => {
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) changeTheme(savedTheme);
     else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
       changeTheme('dark');
-    } else {
+    } else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
       changeTheme('light');
+    } else if (process.env.NEXT_PUBLIC_THEME) {
+      changeTheme(process.env.NEXT_PUBLIC_THEME as Theme);
     }
   }, []);
 
