@@ -22,7 +22,7 @@
   },
   "scripts": {
     "lint": "eslint **/*.{ts,tsx}",
-    "start:spa": "yarn --cwd spa dev",
+    "dev:spa": "yarn --cwd spa dev",
     "build:spa": "yarn --cwd spa build",
     "dev:ssg": "yarn --cwd ssg dev",
     "start:ssg": "yarn --cwd ssg start",
